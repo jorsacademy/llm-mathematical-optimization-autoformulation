@@ -84,7 +84,7 @@ def build_parser() -> argparse.ArgumentParser:
     formulate_parser.add_argument("--output-dir", "-o", default="autoformulation-run")
     formulate_parser.add_argument("--repair-rounds", type=int, default=1)
     formulate_parser.add_argument("--timeout", type=float, default=120.0)
-    formulate_parser.add_argument("--time-limit", type=float)
+    formulate_parser.add_argument("--time-limit", type=float, default=60.0)
     formulate_parser.add_argument("--mip-gap", type=float)
     formulate_parser.add_argument("--no-solve", action="store_true")
     formulate_parser.add_argument("--strict-assumptions", action="store_true")
@@ -103,6 +103,8 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark_parser.add_argument("--output", "-o", default="benchmark-results.json")
     benchmark_parser.add_argument("--repair-rounds", type=int, default=1)
     benchmark_parser.add_argument("--timeout", type=float, default=120.0)
+    benchmark_parser.add_argument("--time-limit", type=float, default=60.0)
+    benchmark_parser.add_argument("--mip-gap", type=float)
     benchmark_parser.add_argument("--objective-tolerance-percent", type=float, default=1e-5)
     benchmark_parser.set_defaults(handler=_handle_benchmark)
 
