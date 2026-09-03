@@ -1,0 +1,1 @@
+A company ships one product from plants A and B to markets X and Y. Plant A can ship at most 20 units and plant B at most 30 units. Market X requires exactly 25 units and market Y exactly 20 units. Unit shipping costs are 2 from A to X, 4 from A to Y, 3 from B to X, and 1 from B to Y. Shipments are continuous and nonnegative. Minimize total shipping cost.

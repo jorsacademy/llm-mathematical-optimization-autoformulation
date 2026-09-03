@@ -1,0 +1,1 @@
+Bir atölye masa ve sandalye üretmektedir. Her masa 40 TL, her sandalye 30 TL katkı sağlar. Bir masa 2 saat işçilik ve 1 birim ahşap; bir sandalye 1 saat işçilik ve 2 birim ahşap kullanır. Haftalık en fazla 100 saat işçilik ve 80 birim ahşap vardır. Üretim miktarları kesirli olabilir ve negatif olamaz. Toplam katkıyı maksimize eden üretim planını bulun.

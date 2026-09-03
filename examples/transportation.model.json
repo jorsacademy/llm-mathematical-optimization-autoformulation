@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "name": "two_plant_transportation",
+  "problem_summary": "Meet both market demands at minimum shipping cost.",
+  "source_language": "en",
+  "variables": [
+    {
+      "name": "ship_A_X",
+      "description": "Units shipped from A to X.",
+      "variable_type": "continuous",
+      "lower_bound": 0.0,
+      "upper_bound": null,
+      "unit": "units",
+      "source_excerpt": null
+    },
+    {
+      "name": "ship_A_Y",
+      "description": "Units shipped from A to Y.",
+      "variable_type": "continuous",
+      "lower_bound": 0.0,
+      "upper_bound": null,
+      "unit": "units",
+      "source_excerpt": null
+    },
+    {
+      "name": "ship_B_X",
+      "description": "Units shipped from B to X.",
+      "variable_type": "continuous",
+      "lower_bound": 0.0,
+      "upper_bound": null,
+      "unit": "units",
+      "source_excerpt": null
+    },
+    {
+      "name": "ship_B_Y",
+      "description": "Units shipped from B to Y.",
+      "variable_type": "continuous",
+      "lower_bound": 0.0,
+      "upper_bound": null,
+      "unit": "units",
+      "source_excerpt": null
+    }
+  ],
+  "objective": {
+    "sense": "minimize",
+    "expression": {
+      "terms": [
+        {
+          "variable": "ship_A_X",
+          "coefficient": 2.0
+        },
+        {
+          "variable": "ship_A_Y",
+          "coefficient": 4.0
+        },
+        {
+          "variable": "ship_B_X",
+          "coefficient": 3.0
+        },
+        {
+          "variable": "ship_B_Y",
+          "coefficient": 1.0
+        }
+      ],
+      "constant": 0.0
+    },
+    "description": "Minimize total shipping cost.",
+    "unit": "currency",
+    "source_excerpt": "Unit shipping costs are 2 ... 4 ... 3 ... and 1."
+  },
+  "constraints": [
+    {
+      "name": "plant_A_capacity",
+      "description": "Plant A ships at most 20 units.",
+      "lhs": {
+        "terms": [
+          {
+            "variable": "ship_A_X",
+            "coefficient": 1.0
+          },
+          {
+            "variable": "ship_A_Y",
+            "coefficient": 1.0
+          }
+        ],
+        "constant": 0.0
+      },
+      "relation": "<=",
+      "rhs": 20.0,
+      "unit": "units",
+      "source_excerpt": "Plant A can ship at most 20 units."
+    },
+    {
+      "name": "plant_B_capacity",
+      "description": "Plant B ships at most 30 units.",
+      "lhs": {
+        "terms": [
+          {
+            "variable": "ship_B_X",
+            "coefficient": 1.0
+          },
+          {
+            "variable": "ship_B_Y",
+            "coefficient": 1.0
+          }
+        ],
+        "constant": 0.0
+      },
+      "relation": "<=",
+      "rhs": 30.0,
+      "unit": "units",
+      "source_excerpt": "Plant B at most 30 units."
+    },
+    {
+      "name": "market_X_demand",
+      "description": "Market X receives exactly 25 units.",
+      "lhs": {
+        "terms": [
+          {
+            "variable": "ship_A_X",
+            "coefficient": 1.0
+          },
+          {
+            "variable": "ship_B_X",
+            "coefficient": 1.0
+          }
+        ],
+        "constant": 0.0
+      },
+      "relation": "==",
+      "rhs": 25.0,
+      "unit": "units",
+      "source_excerpt": "Market X requires exactly 25 units."
+    },
+    {
+      "name": "market_Y_demand",
+      "description": "Market Y receives exactly 20 units.",
+      "lhs": {
+        "terms": [
+          {
+            "variable": "ship_A_Y",
+            "coefficient": 1.0
+          },
+          {
+            "variable": "ship_B_Y",
+            "coefficient": 1.0
+          }
+        ],
+        "constant": 0.0
+      },
+      "relation": "==",
+      "rhs": 20.0,
+      "unit": "units",
+      "source_excerpt": "Market Y exactly 20 units."
+    }
+  ],
+  "assumptions": [],
+  "unresolved_questions": []
+}
