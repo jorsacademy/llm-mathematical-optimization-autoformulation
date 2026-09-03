@@ -139,9 +139,7 @@ class ModelValidator:
                 )
             )
 
-        unresolved_severity = (
-            Severity.ERROR if self.unresolved_as_error else Severity.WARNING
-        )
+        unresolved_severity = Severity.ERROR if self.unresolved_as_error else Severity.WARNING
         for index, question in enumerate(model.unresolved_questions):
             issues.append(
                 ValidationIssue(
@@ -197,8 +195,7 @@ class ModelValidator:
                         code="EMPTY_BINARY_DOMAIN",
                         severity=Severity.ERROR,
                         message=(
-                            "Bounds exclude both 0 and 1 for binary variable "
-                            f"'{variable.name}'."
+                            f"Bounds exclude both 0 and 1 for binary variable '{variable.name}'."
                         ),
                         location=location,
                     )
