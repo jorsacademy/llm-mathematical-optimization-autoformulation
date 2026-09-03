@@ -51,7 +51,8 @@ def write_lp(model: ModelSpec) -> str:
     for constraint in model.constraints:
         rhs = constraint.rhs - constraint.lhs.constant
         lhs = _format_expression(constraint.lhs, include_constant=False)
-        lines.append(f" {constraint.name}: {lhs} {constraint.relation.value} {_format_number(rhs)}")
+        relation = "=" if constraint.relation.value == "==" else constraint.relation.value
+        lines.append(f" {constraint.name}: {lhs} {relation} {_format_number(rhs)}")
 
     lines.append("Bounds")
     for variable in model.variables:
