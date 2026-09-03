@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from autoformulation.cli import main
+from autoformulation.cli import build_parser, main
 from autoformulation.schema import ModelSpec
 
 
@@ -34,3 +34,11 @@ def test_schema_command_outputs_json(capsys: object) -> None:
 
 def test_bad_model_path_returns_error(tmp_path: Path) -> None:
     assert main(["validate", str(tmp_path / "missing.json")]) == 1
+
+
+def test_generated_model_commands_default_to_bounded_solves() -> None:
+    parser = build_parser()
+    formulate_args = parser.parse_args(["formulate", "statement.txt", "--model", "test-model"])
+    benchmark_args = parser.parse_args(["benchmark", "cases.jsonl", "--model", "test-model"])
+    assert formulate_args.time_limit == 60.0
+    assert benchmark_args.time_limit == 60.0
