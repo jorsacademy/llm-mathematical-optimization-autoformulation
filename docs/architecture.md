@@ -39,9 +39,9 @@ statement.
 
 ### `solver.py`
 
-Compiles the trusted IR to NumPy vectors, a sparse SciPy constraint matrix, and SciPy `milp`, which uses HiGHS. It does not use `eval`,
-`exec`, generated imports, or model-generated file paths. The returned point is checked independently
-against bounds, integrality, and every constraint.
+Compiles the trusted IR to NumPy vectors, a sparse SciPy constraint matrix, and SciPy `milp`,
+which uses HiGHS. It does not use `eval`, `exec`, generated imports, or model-generated file paths.
+The returned point is checked independently against bounds, integrality, and every constraint.
 
 ### `lp_writer.py`
 
