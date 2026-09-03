@@ -17,9 +17,7 @@ def test_valid_model_has_no_errors(production_model: ModelSpec) -> None:
 
 def test_unknown_symbol_is_error(production_model: ModelSpec) -> None:
     payload = production_model.model_dump(mode="json")
-    payload["objective"]["expression"]["terms"].append(
-        {"variable": "ghost", "coefficient": 1}
-    )
+    payload["objective"]["expression"]["terms"].append({"variable": "ghost", "coefficient": 1})
     report = ModelValidator().validate(ModelSpec.model_validate(payload))
     assert not report.ok
     issue = next(issue for issue in report.issues if issue.code == "UNKNOWN_SYMBOL")
@@ -59,9 +57,7 @@ def test_constant_contradiction_is_error(production_model: ModelSpec) -> None:
 def test_duplicate_names_and_terms_are_reported(production_model: ModelSpec) -> None:
     payload = production_model.model_dump(mode="json")
     payload["variables"].append(payload["variables"][0].copy())
-    payload["objective"]["expression"]["terms"].append(
-        {"variable": "chairs", "coefficient": 0}
-    )
+    payload["objective"]["expression"]["terms"].append({"variable": "chairs", "coefficient": 0})
     codes = _codes(ModelSpec.model_validate(payload))
     assert "DUPLICATE_NAME" in codes
     assert "DUPLICATE_TERM" in codes
