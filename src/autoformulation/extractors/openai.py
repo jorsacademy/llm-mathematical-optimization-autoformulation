@@ -80,9 +80,7 @@ class OpenAIExtractor(ModelExtractor):
                 text_format=ModelSpec,
             )
         except Exception as exc:  # provider exceptions vary across SDK versions
-            raise ExtractionError(
-                f"OpenAI request failed: {type(exc).__name__}: {exc}"
-            ) from exc
+            raise ExtractionError(f"OpenAI request failed: {type(exc).__name__}: {exc}") from exc
         return self._extract_parsed_model(response)
 
     @staticmethod
