@@ -28,8 +28,14 @@ Thumbs.db
 
 # Generated experiment outputs
 runs/
+reports/
 autoformulation-run/
+benchmark-run*.json
+benchmark-report*.json
 benchmark-results*.json
+leaderboard.md
+leaderboard.csv
+leaderboard.json
 *.lp
 
 # Secrets and provider credentials
