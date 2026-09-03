@@ -7,7 +7,7 @@ executing model-generated source code.
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -27,18 +27,18 @@ class StrictModel(BaseModel):
     )
 
 
-class ObjectiveSense(str, Enum):
+class ObjectiveSense(StrEnum):
     MINIMIZE = "minimize"
     MAXIMIZE = "maximize"
 
 
-class VariableType(str, Enum):
+class VariableType(StrEnum):
     CONTINUOUS = "continuous"
     INTEGER = "integer"
     BINARY = "binary"
 
 
-class Relation(str, Enum):
+class Relation(StrEnum):
     LE = "<="
     GE = ">="
     EQ = "=="
