@@ -66,13 +66,14 @@ def write_lp(model: ModelSpec) -> str:
 
         if lower is None and upper is None:
             lines.append(f" {variable.name} free")
-        elif lower is None:
+        elif lower is None and upper is not None:
             lines.append(f" {variable.name} <= {_format_number(upper)}")
-        elif upper is None:
+        elif lower is not None and upper is None:
             lines.append(f" {_format_number(lower)} <= {variable.name}")
-        elif math.isclose(lower, upper):
+        elif lower is not None and upper is not None and math.isclose(lower, upper):
             lines.append(f" {variable.name} = {_format_number(lower)}")
         else:
+            assert lower is not None and upper is not None
             lines.append(f" {_format_number(lower)} <= {variable.name} <= {_format_number(upper)}")
 
     binaries = [
