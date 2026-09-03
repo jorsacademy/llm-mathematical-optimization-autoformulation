@@ -60,8 +60,7 @@ class AutoformulationPipeline:
             raise ValueError("max_repair_rounds must be between 0 and 5")
         if not 1 <= max_statement_chars <= MAX_STATEMENT_CHARS_HARD_LIMIT:
             raise ValueError(
-                "max_statement_chars must be between 1 and "
-                f"{MAX_STATEMENT_CHARS_HARD_LIMIT}"
+                f"max_statement_chars must be between 1 and {MAX_STATEMENT_CHARS_HARD_LIMIT}"
             )
         self.extractor = extractor
         self.validator = validator or ModelValidator()
