@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 from collections.abc import Sequence
 from pathlib import Path
@@ -17,6 +18,16 @@ from autoformulation.extractors.base import ExtractionError
 from autoformulation.extractors.openai import OpenAIExtractor
 from autoformulation.lp_writer import write_lp
 from autoformulation.pipeline import AutoformulationPipeline
+from autoformulation.research_benchmark import (
+    FormulationPassPolicy,
+    generate_benchmark_run,
+    load_report,
+    load_run,
+    load_suite,
+    render_leaderboard,
+    save_artifact,
+    score_benchmark_run,
+)
 from autoformulation.schema import ModelSpec
 from autoformulation.solver import SolveOptions, solve_model
 from autoformulation.validation import ModelValidator
@@ -92,7 +103,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     benchmark_parser = subparsers.add_parser(
         "benchmark",
-        help="Run JSONL benchmark cases through the OpenAI extraction pipeline.",
+        help="Run legacy inline JSONL benchmark cases through the OpenAI extraction pipeline.",
     )
     benchmark_parser.add_argument("cases_jsonl")
     benchmark_parser.add_argument(
@@ -105,6 +116,55 @@ def build_parser() -> argparse.ArgumentParser:
     benchmark_parser.add_argument("--timeout", type=float, default=120.0)
     benchmark_parser.add_argument("--objective-tolerance-percent", type=float, default=1e-5)
     benchmark_parser.set_defaults(handler=_handle_benchmark)
+
+    generate_parser = subparsers.add_parser(
+        "benchmark-generate",
+        help="Generate a reusable raw run for a methodology benchmark suite.",
+    )
+    generate_parser.add_argument("suite_json")
+    generate_parser.add_argument(
+        "--model",
+        default=os.environ.get("AUTOFORMULATION_MODEL"),
+        help="OpenAI model ID; may also be set with AUTOFORMULATION_MODEL.",
+    )
+    generate_parser.add_argument("--system-id")
+    generate_parser.add_argument("--output", "-o", default="benchmark-run.json")
+    generate_parser.add_argument("--repair-rounds", type=int, default=1)
+    generate_parser.add_argument("--timeout", type=float, default=120.0)
+    generate_parser.add_argument("--strict-assumptions", action="store_true")
+    generate_parser.set_defaults(handler=_handle_benchmark_generate)
+
+    score_parser = subparsers.add_parser(
+        "benchmark-score",
+        help="Score a raw run against gold formulations without new provider calls.",
+    )
+    score_parser.add_argument("suite_json")
+    score_parser.add_argument("run_json")
+    score_parser.add_argument("--output", "-o", default="benchmark-report.json")
+    score_parser.add_argument("--coefficient-tolerance", type=float, default=1e-7)
+    score_parser.add_argument("--objective-tolerance-percent", type=float, default=1e-5)
+    score_parser.add_argument("--minimum-alignment-score", type=float, default=0.55)
+    score_parser.add_argument("--solve-time-limit", type=float, default=60.0)
+    score_parser.add_argument(
+        "--formulation-pass-policy",
+        type=FormulationPassPolicy,
+        choices=tuple(FormulationPassPolicy),
+        default=FormulationPassPolicy.STRICT,
+    )
+    score_parser.set_defaults(handler=_handle_benchmark_score)
+
+    compare_parser = subparsers.add_parser(
+        "benchmark-compare",
+        help="Render provider/model comparison tables from scored reports.",
+    )
+    compare_parser.add_argument("report_json", nargs="+")
+    compare_parser.add_argument(
+        "--format",
+        choices=("markdown", "csv", "json"),
+        default="markdown",
+    )
+    compare_parser.add_argument("--output", "-o")
+    compare_parser.set_defaults(handler=_handle_benchmark_compare)
 
     return parser
 
@@ -149,6 +209,13 @@ def _require_model_id(value: str | None) -> str:
     if not value:
         raise ValueError("An OpenAI model ID is required via --model or AUTOFORMULATION_MODEL.")
     return value
+
+
+def _safe_system_id(value: str) -> str:
+    sanitized = re.sub(r"[^A-Za-z0-9_.-]+", "-", value).strip("-.")
+    if not sanitized:
+        raise ValueError("Could not derive a valid system ID; pass --system-id explicitly.")
+    return sanitized[:128]
 
 
 def _make_pipeline(args: argparse.Namespace) -> AutoformulationPipeline:
@@ -213,6 +280,62 @@ def _handle_benchmark(args: argparse.Namespace) -> int:
     save_summary(summary, args.output)
     _print_json(summary)
     return 0 if summary.completed_cases == summary.total_cases else 4
+
+
+def _handle_benchmark_generate(args: argparse.Namespace) -> int:
+    suite = load_suite(args.suite_json)
+    model = _require_model_id(args.model)
+    run = generate_benchmark_run(
+        suite,
+        _make_pipeline(args),
+        system_id=args.system_id or _safe_system_id(model),
+    )
+    save_artifact(run, args.output)
+    completed = sum(prediction.completed for prediction in run.predictions)
+    _print_json(
+        {
+            "output": args.output,
+            "suite_id": suite.suite_id,
+            "system_id": run.system.system_id,
+            "suite_sha256": run.suite_sha256,
+            "completed_cases": completed,
+            "total_cases": len(run.predictions),
+        }
+    )
+    return 0 if completed == len(run.predictions) else 4
+
+
+def _handle_benchmark_score(args: argparse.Namespace) -> int:
+    report = score_benchmark_run(
+        load_suite(args.suite_json),
+        load_run(args.run_json),
+        coefficient_tolerance=args.coefficient_tolerance,
+        objective_tolerance_percent=args.objective_tolerance_percent,
+        minimum_alignment_score=args.minimum_alignment_score,
+        solve_time_limit_seconds=args.solve_time_limit,
+        formulation_pass_policy=args.formulation_pass_policy,
+    )
+    save_artifact(report, args.output)
+    _print_json(
+        {
+            "output": args.output,
+            "suite_id": report.suite_id,
+            "suite_sha256": report.suite_sha256,
+            "run_sha256": report.run_sha256,
+            "summary": report.summary.model_dump(mode="json"),
+        }
+    )
+    return 0
+
+
+def _handle_benchmark_compare(args: argparse.Namespace) -> int:
+    reports = [load_report(path) for path in args.report_json]
+    rendered = render_leaderboard(reports, output_format=args.format)
+    if args.output:
+        Path(args.output).write_text(rendered, encoding="utf-8")
+    else:
+        print(rendered, end="")
+    return 0
 
 
 def main(argv: Sequence[str] | None = None) -> int:
