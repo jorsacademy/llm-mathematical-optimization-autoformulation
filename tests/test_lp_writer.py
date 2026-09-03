@@ -71,3 +71,11 @@ def test_lp_writer_covers_free_upper_fixed_and_integer_bounds(production_model: 
     assert "upper_x <= 7" in rendered
     assert "fixed_x = 2" in rendered
     assert "Generals\n fixed_x" in rendered
+
+
+def test_lp_writer_uses_standard_equality_token(production_model: ModelSpec) -> None:
+    payload = production_model.model_dump(mode="json")
+    payload["constraints"][0]["relation"] = "=="
+    rendered = write_lp(ModelSpec.model_validate(payload))
+    assert "labor_capacity: 2 tables + chairs = 100" in rendered
+    assert " == " not in rendered
