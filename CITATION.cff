@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software in academic work, please cite the repository and the specific version or commit."
+title: "LLM Mathematical Optimization Autoformulation"
+type: software
+authors:
+  - alias: jorsacademy
+version: 0.1.0
+date-released: 2026-09-03
+repository-code: "https://github.com/jorsacademy/llm-mathematical-optimization-autoformulation"
+license: PolyForm-Noncommercial-1.0.0
+keywords:
+  - operations research
+  - mathematical optimization
+  - large language models
+  - autoformulation
+  - mixed-integer linear programming

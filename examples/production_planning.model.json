@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "name": "production_planning",
+  "problem_summary": "Masa ve sandalye üretim miktarlarını seçerek toplam katkıyı maksimize et.",
+  "source_language": "tr",
+  "variables": [
+    {
+      "name": "tables",
+      "description": "Üretilecek masa miktarı.",
+      "variable_type": "continuous",
+      "lower_bound": 0.0,
+      "upper_bound": null,
+      "unit": "adet",
+      "source_excerpt": "Üretim miktarları kesirli olabilir ve negatif olamaz."
+    },
+    {
+      "name": "chairs",
+      "description": "Üretilecek sandalye miktarı.",
+      "variable_type": "continuous",
+      "lower_bound": 0.0,
+      "upper_bound": null,
+      "unit": "adet",
+      "source_excerpt": "Üretim miktarları kesirli olabilir ve negatif olamaz."
+    }
+  ],
+  "objective": {
+    "sense": "maximize",
+    "expression": {
+      "terms": [
+        {
+          "variable": "tables",
+          "coefficient": 40.0
+        },
+        {
+          "variable": "chairs",
+          "coefficient": 30.0
+        }
+      ],
+      "constant": 0.0
+    },
+    "description": "Toplam katkıyı maksimize et.",
+    "unit": "TL",
+    "source_excerpt": "Her masa 40 TL, her sandalye 30 TL katkı sağlar."
+  },
+  "constraints": [
+    {
+      "name": "labor_capacity",
+      "description": "Haftalık işçilik kapasitesi.",
+      "lhs": {
+        "terms": [
+          {
+            "variable": "tables",
+            "coefficient": 2.0
+          },
+          {
+            "variable": "chairs",
+            "coefficient": 1.0
+          }
+        ],
+        "constant": 0.0
+      },
+      "relation": "<=",
+      "rhs": 100.0,
+      "unit": "saat",
+      "source_excerpt": "Bir masa 2 saat işçilik ... bir sandalye 1 saat işçilik ... en fazla 100 saat."
+    },
+    {
+      "name": "wood_capacity",
+      "description": "Haftalık ahşap kapasitesi.",
+      "lhs": {
+        "terms": [
+          {
+            "variable": "tables",
+            "coefficient": 1.0
+          },
+          {
+            "variable": "chairs",
+            "coefficient": 2.0
+          }
+        ],
+        "constant": 0.0
+      },
+      "relation": "<=",
+      "rhs": 80.0,
+      "unit": "birim_ahsap",
+      "source_excerpt": "Bir masa 1 birim ahşap ... bir sandalye 2 birim ahşap ... 80 birim ahşap."
+    }
+  ],
+  "assumptions": [],
+  "unresolved_questions": []
+}
