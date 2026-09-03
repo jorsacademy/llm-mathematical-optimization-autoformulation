@@ -26,9 +26,7 @@ def _format_expression(expression: LinearExpression, *, include_constant: bool) 
         magnitude = abs(coefficient)
         if symbol:
             body = (
-                symbol
-                if math.isclose(magnitude, 1.0)
-                else f"{_format_number(magnitude)} {symbol}"
+                symbol if math.isclose(magnitude, 1.0) else f"{_format_number(magnitude)} {symbol}"
             )
         else:
             body = _format_number(magnitude)
@@ -75,9 +73,7 @@ def write_lp(model: ModelSpec) -> str:
         elif math.isclose(lower, upper):
             lines.append(f" {variable.name} = {_format_number(lower)}")
         else:
-            lines.append(
-                f" {_format_number(lower)} <= {variable.name} <= {_format_number(upper)}"
-            )
+            lines.append(f" {_format_number(lower)} <= {variable.name} <= {_format_number(upper)}")
 
     binaries = [
         variable.name
