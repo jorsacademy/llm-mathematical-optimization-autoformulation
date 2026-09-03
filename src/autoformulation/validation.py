@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from collections import Counter
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import Field
 
@@ -19,7 +19,7 @@ from autoformulation.schema import (
 )
 
 
-class Severity(str, Enum):
+class Severity(StrEnum):
     ERROR = "error"
     WARNING = "warning"
     INFO = "info"
