@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "llm-mathematical-optimization-autoformulation"
-version = "0.1.0"
-description = "A verification-first laboratory for translating natural-language OR problems into solver-ready LP/MILP models."
+version = "0.2.0"
+description = "Verification-first LP/MILP autoformulation and solver-grounded methodology benchmarking."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
@@ -16,6 +16,7 @@ keywords = [
   "large-language-models",
   "autoformulation",
   "mixed-integer-programming",
+  "benchmarking",
 ]
 classifiers = [
   "Development Status :: 3 - Alpha",
