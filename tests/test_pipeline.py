@@ -15,9 +15,7 @@ class RepairingExtractor(ModelExtractor):
     def extract(self, statement: str) -> ModelSpec:
         return self.initial
 
-    def repair(
-        self, statement: str, model: ModelSpec, report: ValidationReport
-    ) -> ModelSpec:
+    def repair(self, statement: str, model: ModelSpec, report: ValidationReport) -> ModelSpec:
         self.repairs += 1
         return self.repaired
 
@@ -52,9 +50,9 @@ def test_pipeline_stops_when_repair_is_unsupported(production_model: ModelSpec) 
     payload["unresolved_questions"] = ["Unknown capacity."]
     initial = ModelSpec.model_validate(payload)
 
-    result = AutoformulationPipeline(
-        NonRepairingExtractor(initial), max_repair_rounds=2
-    ).run("statement")
+    result = AutoformulationPipeline(NonRepairingExtractor(initial), max_repair_rounds=2).run(
+        "statement"
+    )
 
     assert not result.valid
     assert result.solution is None
