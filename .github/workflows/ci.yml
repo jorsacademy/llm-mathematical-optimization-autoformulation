@@ -45,7 +45,7 @@ jobs:
         run: ruff format --check .
 
       - name: Type check
-        run: mypy src
+        run: mypy --python-version "${{ matrix.python-version }}" src
 
       - name: Test with branch coverage
         run: pytest --cov=autoformulation --cov-report=term-missing
