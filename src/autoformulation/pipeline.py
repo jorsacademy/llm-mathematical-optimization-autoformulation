@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import Field
 
@@ -17,7 +17,7 @@ DEFAULT_MAX_STATEMENT_CHARS = 100_000
 MAX_STATEMENT_CHARS_HARD_LIMIT = 1_000_000
 
 
-class PipelineStage(str, Enum):
+class PipelineStage(StrEnum):
     EXTRACTED = "extracted"
     VALIDATED = "validated"
     REPAIRED = "repaired"
